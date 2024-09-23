@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "weecuba-dotnet-service.fullname" . }}
+  labels:
+    {{- include "weecuba-dotnet-service.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "weecuba-dotnet-service.selectorLabels" . | nindent 4 }}
