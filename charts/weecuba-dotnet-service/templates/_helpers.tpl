@@ -5,6 +5,10 @@ Expand the name of the chart.
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+{{- define "weecuba-dotnet-service.namespace" -}}
+  {{- default .Release.Namespace .Values.forceNamespace -}}
+{{- end }}
+
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
@@ -39,6 +43,8 @@ helm.sh/chart: {{ include "weecuba-dotnet-service.chart" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
+app.kubernetes.io/organization: {{ .Values.organization }}
+app.kubernetes.io/environment: {{ .Values.environmentName }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
@@ -46,8 +52,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "weecuba-dotnet-service.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "weecuba-dotnet-service.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/name: {{ include "weecuba-dotnet-service.fullname" . }}
+app.kubernetes.io/release: {{ .Release.Name }}
 {{- end }}
 
 {{/*

@@ -6,10 +6,12 @@ metadata:
     {{- include "weecuba-dotnet-service.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
+  {{- if .Values.metrics.enabled }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: http
+    - name: metrics
+      port: {{ .Values.metrics.port }}
+      targetPort: {{ .Values.metrics.targetPort }}
       protocol: TCP
-      name: http
+  {{- end }}
   selector:
     {{- include "weecuba-dotnet-service.selectorLabels" . | nindent 4 }}
