@@ -40,11 +40,9 @@ Common labels
 {{- define "weecuba-dotnet-service.labels" -}}
 helm.sh/chart: {{ include "weecuba-dotnet-service.chart" . }}
 {{ include "weecuba-dotnet-service.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
 app.kubernetes.io/organization: {{ .Values.organization }}
 app.kubernetes.io/environment: {{ .Values.environmentName }}
+app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
 
