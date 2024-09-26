@@ -34,16 +34,17 @@ deployment:
   # Specifies the revision history limit
   revisionHistoryLimit: 3
 
+  securityContext: {}
+    # fsGroup: 2000
+
   # Define pod annotations for the deployment
   podAnnotations: {}
   
   # Define pod labels for the deployment
   podLabels: {}
 
+  # Define security context for the pod
   podSecurityContext: {}
-    # fsGroup: 2000
-
-  securityContext: {}
     # capabilities:
     #   drop:
     #   - ALL
