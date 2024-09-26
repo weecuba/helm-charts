@@ -29,7 +29,9 @@ If release name contains chart name it will be used as a full name.
 Create chart name and version as used by the chart label.
 */}}
 {{- define "weecuba-dotnet-service.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- $fullname := include "weecuba-dotnet-service.fullname" . -}}
+{{- $version := include "weecuba-dotnet-service.version" . -}}
+{{- printf "%s-%s" $fullname $version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
@@ -38,10 +40,15 @@ Common labels
 {{- define "weecuba-dotnet-service.labels" -}}
 helm.sh/chart: {{ include "weecuba-dotnet-service.chart" . }}
 {{ include "weecuba-dotnet-service.selectorLabels" . }}
-app.kubernetes.io/organization: {{ .Values.organization }}
-app.kubernetes.io/environment: {{ .Values.environmentName }}
-app.kubernetes.io/version: {{ .Values.image.tag | default .Chart.AppVersion | quote }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/release: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Version
+*/}}
+{{- define "weecuba-dotnet-service.version" -}}
+{{- .Values.image.tag | default .Chart.AppVersion }}
 {{- end }}
 
 {{/*
@@ -49,7 +56,9 @@ Selector labels
 */}}
 {{- define "weecuba-dotnet-service.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "weecuba-dotnet-service.fullname" . }}
-app.kubernetes.io/release: {{ .Release.Name }}
+app.kubernetes.io/organization: {{ .Values.organization }}
+app.kubernetes.io/environment: {{ .Values.environmentName }}
+app.kubernetes.io/version: {{ include "weecuba-dotnet-service.version" . }}
 {{- end }}
 
 {{/*
