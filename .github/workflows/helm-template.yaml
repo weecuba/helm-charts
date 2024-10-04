@@ -1,0 +1,35 @@
+name: Release Charts
+
+on:
+  push:
+    branches: 
+      - '*' 
+  pull_request:
+    branches: 
+      - '*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Helm info
+        run: |
+            helm version --short
+
+      - name: Helm template
+        run: |
+            helm lint charts/weecuba-dotnet-service/
+            helm lint charts/weecuba-dotnet-webapi/
+
+      - name: Helm template
+        run: |
+            helm template charts/weecuba-dotnet-service/
+            helm template charts/weecuba-dotnet-webapi
