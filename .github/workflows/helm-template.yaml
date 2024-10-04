@@ -24,7 +24,7 @@ jobs:
         run: |
             helm version --short
 
-      - name: Helm template
+      - name: Helm lint
         run: |
             helm lint charts/weecuba-dotnet-service/
             helm lint charts/weecuba-dotnet-webapi/
