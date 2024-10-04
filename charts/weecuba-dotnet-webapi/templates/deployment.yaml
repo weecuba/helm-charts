@@ -2,11 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "weecuba-dotnet-webapi.fullname" . }}
+  namespace: {{ include "weecuba-dotnet-webapi.namespace" . }}
   labels:
     {{- include "weecuba-dotnet-webapi.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.deployment.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
@@ -19,42 +20,40 @@ spec:
       {{- end }}
       labels:
         {{- include "weecuba-dotnet-webapi.labels" . | nindent 8 }}
-	{{- with .Values.podLabels }}
-        {{- toYaml . | nindent 8 }}
+	      {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.deployment.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "weecuba-dotnet-webapi.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.deployment.securityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+            {{- toYaml .Values.deployment.podSecurityContext | nindent 12 }}
+          image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
+          env:
+            {{- toYaml .Values.deployment.environment | nindent 12 }}          
+          {{- with .Values.deployment.containerPorts }}
           ports:
-            - name: http
-              containerPort: {{ .Values.service.port }}
-              protocol: TCP
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           livenessProbe:
-            httpGet:
-              path: /
-              port: http
+            {{- toYaml .Values.deployment.livenessProbe | nindent 12 }}
           readinessProbe:
-            httpGet:
-              path: /
-              port: http
+            {{- toYaml .Values.deployment.readinessProbe | nindent 12 }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
+            {{- toYaml .Values.deployment.resources | nindent 12 }}
+          {{- with .Values.deployment.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.volumes }}
+      {{- with .Values.deployment.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
