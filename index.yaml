@@ -63,6 +63,16 @@ entries:
     version: 0.1.0
   weecuba-dotnet-webapi:
   - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2024-10-04T22:40:34.191286533Z"
+    description: A Helm chart for Kubernetes
+    digest: f0258e3ebcff98cde271ef365d4a7c6559aeda39826c5389512ecd94d4e962a0
+    name: weecuba-dotnet-webapi
+    type: application
+    urls:
+    - https://github.com/weecuba/helm-charts/releases/download/weecuba-dotnet-webapi-0.1.1/weecuba-dotnet-webapi-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
     appVersion: 1.16.0
     created: "2024-09-23T19:51:50.426520694Z"
     description: A Helm chart for Kubernetes
@@ -72,4 +82,4 @@ entries:
     urls:
     - https://github.com/weecuba/helm-charts/releases/download/weecuba-dotnet-webapi-0.1.0/weecuba-dotnet-webapi-0.1.0.tgz
     version: 0.1.0
-generated: "2024-09-26T20:31:57.746848719Z"
+generated: "2024-10-04T22:40:34.191310347Z"
