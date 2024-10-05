@@ -3,6 +3,7 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "weecuba-dotnet-webapi.fullname" . }}
+  namespace: {{ include "weecuba-dotnet-webapi.namespace" . }}
   labels:
     {{- include "weecuba-dotnet-webapi.labels" . | nindent 4 }}
 spec:
