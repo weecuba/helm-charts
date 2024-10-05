@@ -1,0 +1,32 @@
+suite: "Certificate Resource Tests"
+
+templates:
+  - certificate.yaml
+
+tests:
+  - it: "should create a Certificate when certificate.create is true"
+    set:
+      nameOverride: test-release
+      certificate.create: true
+      certificate.secretName: "my-cert-secret"
+      certificate.certificateAuthority: true
+      certificate.usages: ["digital signature", "key encipherment"]
+      certificate.dns: ["example.com", "www.example.com"]
+      certificate.issuer:
+        name: "letsencrypt-prod"
+        kind: "ClusterIssuer"
+    asserts:
+      - isKind:
+          of: Certificate
+      - equal:
+          path: spec.secretName
+          value: "my-cert-secret"
+      - equal:
+          path: spec.isCA
+          value: true
+      - equal:
+          path: spec.issuerRef.name
+          value: "letsencrypt-prod"
+      - equal:
+          path: spec.issuerRef.kind
+          value: "ClusterIssuer"
