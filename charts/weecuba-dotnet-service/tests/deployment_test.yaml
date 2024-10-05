@@ -1,0 +1,40 @@
+suite: Test deployment template rendering
+
+templates:
+  - deployment.yaml
+
+tests:
+  - it: "should contain the correct deployment name"
+    set:
+      nameOverride: test-release
+    asserts:
+      - isKind:
+          of: Deployment
+      - matchRegex:
+          path: metadata.name
+          pattern: "test-release"
+
+  - it: "should contain the correct image"
+    set:
+      deployment.image.repository: nginx
+      deployment.image.tag: latest
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: nginx:latest
+
+  - it: "should have replica count set to 3"
+    set:
+      deployment.replicaCount: 3
+    asserts:
+      - equal:
+          path: spec.replicas
+          value: 3
+
+  - it: "should have pullPolicy IfNotPresent"
+    set:
+      deployment.image.pullPolicy: IfNotPresent
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: IfNotPresent        

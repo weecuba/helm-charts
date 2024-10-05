@@ -26,6 +26,9 @@ deployment:
   # Specifies the number of replicas
   replicaCount: 1
 
+  # Define revision history limit for the deployment
+  revisionHistoryLimit: 3
+
   # Define image and version
   image:
     repository: alpine
@@ -34,9 +37,6 @@ deployment:
 
   # Specifies the imagePullSecret 
   imagePullSecrets: []
-
-  # Specifies the revision history limit
-  revisionHistoryLimit: 3
 
   securityContext: {}
     # fsGroup: 2000
@@ -82,15 +82,15 @@ deployment:
       path: /
       port: http
 
-    # Additional volumes on the output Deployment definition.
-    volumes: []
+  # Additional volumes on the output Deployment definition.
+  volumes: []
     # - name: foo
     #   secret:
     #     secretName: mysecret
     #     optional: false
 
-    # Additional volumeMounts on the output Deployment definition.
-    volumeMounts: []
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts: []
     # - name: foo
     #   mountPath: "/etc/foo"
     #   readOnly: true      
@@ -114,6 +114,8 @@ ingress:
   enabled: false
   className: ""
   annotations: {}
+  service:
+    port: 8080
   hosts:
     - host: chart-example.local
       paths:
