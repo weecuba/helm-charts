@@ -48,6 +48,7 @@ helm.sh/chart: {{ include "weecuba-dotnet-webapi.chart" . }}
 {{ include "weecuba-dotnet-webapi.selectorLabels" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/release: {{ .Release.Name }}
+app.kubernetes.io/version: {{ include "weecuba-dotnet-webapi.version" . }}
 {{- end }}
 
 {{/*
@@ -57,7 +58,6 @@ Selector labels
 app.kubernetes.io/name: {{ include "weecuba-dotnet-webapi.fullname" . }}
 app.kubernetes.io/organization: {{ .Values.organization }}
 app.kubernetes.io/environment: {{ .Values.environmentName }}
-app.kubernetes.io/version: {{ include "weecuba-dotnet-webapi.version" . }}
 {{- end }}
 
 {{/*

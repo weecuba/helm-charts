@@ -1,0 +1,20 @@
+{{- if .Values.certificate.create }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "weecuba-dotnet-webapi.fullname" . }}
+  namespace: {{ include "weecuba-dotnet-webapi.namespace" . }}
+spec:
+  secretName: {{ .Values.certificate.secretName }}
+  isCA: {{ .Values.certificate.certificateAuthority }}
+  {{- with .Values.certificate.usages }}
+  usages:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.certificate.dns }}
+  dnsNames:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  issuerRef:
+  {{- toYaml .Values.certificate.issuer | nindent 4 }}
+{{- end }}
