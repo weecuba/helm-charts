@@ -48,7 +48,7 @@ app.kubernetes.io/release: {{ .Release.Name }}
 Version
 */}}
 {{- define "weecuba-dotnet-service.version" -}}
-{{- .Values.image.tag | default .Chart.AppVersion }}
+{{- .Values.deployment.image.tag | default .Chart.AppVersion }}
 {{- end }}
 
 {{/*

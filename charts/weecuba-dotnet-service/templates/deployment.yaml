@@ -9,7 +9,7 @@ metadata:
     {{- end }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.deployment.replicaCount }}
   {{- end }}
   revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
   selector:
@@ -38,8 +38,8 @@ spec:
         - name: {{ include "weecuba-dotnet-service.fullname" . }}
           securityContext:
             {{- toYaml .Values.deployment.podSecurityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
           env:
             {{- toYaml .Values.deployment.environment | nindent 12 }}
           {{- if .Values.metrics.enabled }}
@@ -50,11 +50,11 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.deployment.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
+          {{- with .Values.deployment.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.volumes }}
+      {{- with .Values.deployment.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}

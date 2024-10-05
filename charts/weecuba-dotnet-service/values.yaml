@@ -2,14 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
-
-image:
-  repository: alpine
-  pullPolicy: IfNotPresent
-  tag: "latest"
-
-imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
@@ -31,6 +23,18 @@ serviceAccount:
   name: ""
 
 deployment:
+  # Specifies number of replicas
+  replicaCount: 1
+
+  # Image to use for the deployment
+  image:
+    repository: alpine
+    pullPolicy: IfNotPresent
+    tag: "latest"
+
+  # Define image pull secrets for the deployment
+  imagePullSecrets: []
+
   # Specifies the revision history limit
   revisionHistoryLimit: 3
 
@@ -61,7 +65,20 @@ deployment:
     #   memory: 128Mi
     # requests:
     #   cpu: 100m
-    #   memory: 128Mi    
+    #   memory: 128Mi
+
+  # Additional volumes on the output Deployment definition.
+  volumes: []
+  # - name: foo
+  #   secret:
+  #     secretName: mysecret
+  #     optional: false
+
+  # Additional volumeMounts on the output Deployment definition.
+  volumeMounts: []
+  # - name: foo
+  #   mountPath: "/etc/foo"
+  #   readOnly: true     
 
 service:
   type: ClusterIP
@@ -78,19 +95,6 @@ autoscaling:
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
-
-# Additional volumes on the output Deployment definition.
-volumes: []
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
-
-# Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
 
 podDisruptionBudget:
   create: false

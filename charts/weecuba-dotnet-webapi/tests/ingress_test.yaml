@@ -1,0 +1,25 @@
+suite: Test Ingress template rendering
+
+templates:
+  - ingress.yaml
+
+tests:
+  - it: "should contain the correct ingress name"
+    set:
+      nameOverride: test-release
+      ingress.enabled: true
+    asserts:
+      - isKind:
+          of: Ingress
+      - matchRegex:
+          path: metadata.name
+          pattern: "test-release"
+
+  - it: "should contain the correct class name"
+    set:
+      ingress.enabled: true
+      ingress.className: "haproxy"
+    asserts:
+      - equal:
+          path: spec.ingressClassName
+          value: "haproxy"           
