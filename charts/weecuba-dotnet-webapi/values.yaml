@@ -130,6 +130,19 @@ podDisruptionBudget:
   create: false
   minAvailable: 1
 
+certificate:
+  create: false
+  # secretName: certificate-tls
+  # certificateAuthority: false
+  # usages:
+  #   - client auth
+  #   - server auth  
+  # dns:
+  #   - name.namespace.svc.cluster.local
+  # issuer:
+  #   name: ca-issuer
+  #   kind: Issuer
+
 nodeSelector: {}
 
 tolerations: []

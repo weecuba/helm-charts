@@ -42,6 +42,7 @@ helm.sh/chart: {{ include "weecuba-dotnet-service.chart" . }}
 {{ include "weecuba-dotnet-service.selectorLabels" . }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 app.kubernetes.io/release: {{ .Release.Name }}
+app.kubernetes.io/version: {{ include "weecuba-dotnet-service.version" . }}
 {{- end }}
 
 {{/*
@@ -58,7 +59,6 @@ Selector labels
 app.kubernetes.io/name: {{ include "weecuba-dotnet-service.fullname" . }}
 app.kubernetes.io/organization: {{ .Values.organization }}
 app.kubernetes.io/environment: {{ .Values.environmentName }}
-app.kubernetes.io/version: {{ include "weecuba-dotnet-service.version" . }}
 {{- end }}
 
 {{/*
