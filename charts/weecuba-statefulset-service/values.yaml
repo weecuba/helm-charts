@@ -23,8 +23,10 @@ statefulset:
   # Environment variables
   environment: []
 
+  # Define extra environment variable from configuration maps
   extraEnvVarsCM: {}
 
+  # Define extra environment variable from secrets
   extraEnvVarsSecret: {}
 
   resources: {}
@@ -41,6 +43,18 @@ statefulset:
 
   securityContext: {}
     # fsGroup: 2000
+
+  # Define livenessProbe for container
+  livenessProbe: {}
+    # httpGet:
+    #   path: /
+    #   port: http
+  
+  # Define readinessProbe for container  
+  readinessProbe: {}
+    # httpGet:
+    #   path: /
+    #   port: http    
 
   # Define pod annotations for the deployment
   podAnnotations: {}
@@ -102,6 +116,7 @@ serviceAccount:
   name: ""
 
 service:
+  #serviceName: null
   type: ClusterIP
   port: 80
 

@@ -6,9 +6,9 @@ metadata:
   labels:
     {{- include "weecuba-statefulset-service.labels" . | nindent 4 }}
 spec:
-  serviceName: {{ .Values.serviceName }}
+  serviceName: {{ include "weecuba-statefulset-service.fullname" . }}
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.statefulset.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
@@ -28,18 +28,25 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "weecuba-statefulset-service.serviceAccountName" . }}
+      {{- if .Values.securityContext }}
       securityContext:
         {{- toYaml .Values.securityContext | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ include "weecuba-statefulset-service.fullname" . }}
           image: "{{ .Values.statefulset.image.repository }}:{{ .Values.statefulset.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.statefulset.image.pullPolicy }}
+          {{- if .Values.statefulset.podSecurityContext }}
           securityContext:
-            {{- toYaml .Values.podSecurityContext | nindent 12 }}
+            {{- toYaml .Values.statefulset.podSecurityContext | nindent 12 }}          
+          {{- end }}
+          {{- if .Values.statefulset.environment }}
           env:
-            {{- toYaml .Values.statefulset.environment | nindent 12 }}    
+            {{- toYaml .Values.statefulset.environment | nindent 12 }}
+          {{- end }}
+          {{- if or .Values.statefulset.extraEnvVarsCM .Values.statefulset.extraEnvVarsSecret }}               
           envFrom:
-            {{- if .Values.statefulset.extraEnvVarsCM }}
+          {{- if .Values.statefulset.extraEnvVarsCM }}
             - configMapRef:
                 name: {{ .Values.statefulset.extraEnvVarsCM }}
             {{- end }}
@@ -47,16 +54,23 @@ spec:
             - secretRef:
                 name: {{ .Values.statefulset.extraEnvVarsSecret }}
             {{- end }}
+          {{- end }}
           {{- with .Values.statefulset.containerPorts }}              
           ports:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- if .Values.statefulset.livenessProbe -}}
           livenessProbe:
             {{- toYaml .Values.statefulset.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.statefulset.livenessProbe -}}       
           readinessProbe:
             {{- toYaml .Values.statefulset.readinessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .Values.statefulset.resources -}}            
           resources:
             {{- toYaml .Values.statefulset.resources | nindent 12 }}
+          {{- end }}
           {{- with .Values.statefulset.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
