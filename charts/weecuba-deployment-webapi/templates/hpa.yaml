@@ -2,15 +2,15 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "weecuba-dotnet-webapi.fullname" . }}
-  namespace: {{ include "weecuba-dotnet-webapi.namespace" . }}
+  name: {{ include "weecuba-deployment-webapi.fullname" . }}
+  namespace: {{ include "weecuba-deployment-webapi.namespace" . }}
   labels:
-    {{- include "weecuba-dotnet-webapi.labels" . | nindent 4 }}
+    {{- include "weecuba-deployment-webapi.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "weecuba-dotnet-webapi.fullname" . }}
+    name: {{ include "weecuba-deployment-webapi.fullname" . }}
   minReplicas: {{ .Values.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
   metrics:

@@ -20,9 +20,9 @@ jobs:
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
-      - name: Insall helm unittest  plugin
+      - name: Install helm unittest  plugin
         run : |
-            helm plugin install https://github.com/quintush/helm-unittest
+            helm plugin install https://github.com/helm-unittest/helm-unittest
 
       - name: Helm info
         run: |
@@ -30,15 +30,18 @@ jobs:
 
       - name: Helm lint
         run: |
-            helm lint charts/weecuba-dotnet-service/
-            helm lint charts/weecuba-dotnet-webapi/
+          for chart in charts/*/; do
+            helm lint "$chart"
+          done
 
       - name: Helm template
         run: |
-            helm template charts/weecuba-dotnet-service/
-            helm template charts/weecuba-dotnet-webapi/
+          for chart in charts/*/; do
+            helm template "$chart"
+          done
 
       - name: Helm unit test
         run: |
-            helm unittest charts/weecuba-dotnet-service/
-            helm unittest charts/weecuba-dotnet-webapi            
+          for chart in charts/*/; do
+            helm unittest "$chart"
+          done          

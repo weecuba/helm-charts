@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "weecuba-dotnet-webapi.fullname" . -}}
+{{- $fullName := include "weecuba-deployment-webapi.fullname" . -}}
 {{- $svcPort := .Values.ingress.service.port -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.ingress.annotations "kubernetes.io/ingress.class") }}
@@ -16,9 +16,9 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
-  namespace: {{ include "weecuba-dotnet-webapi.namespace" . }}
+  namespace: {{ include "weecuba-deployment-webapi.namespace" . }}
   labels:
-    {{- include "weecuba-dotnet-webapi.labels" . | nindent 4 }}
+    {{- include "weecuba-deployment-webapi.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

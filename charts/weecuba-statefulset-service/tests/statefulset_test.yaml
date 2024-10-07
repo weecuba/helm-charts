@@ -1,0 +1,15 @@
+suite: Statefulset resource
+
+templates:
+  - statefulset.yaml
+
+tests:
+  - it: should work
+    set:
+      stateful.image.tag: latest
+    asserts:
+      - isKind:
+          of: StatefulSet
+      - equal:
+          path: spec.template.spec.containers[0].image
+          value: alpine:latest

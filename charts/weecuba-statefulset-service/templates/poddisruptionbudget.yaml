@@ -2,10 +2,10 @@
 apiVersion: "policy/v1"
 kind: PodDisruptionBudget
 metadata:
-  name: {{ include "weecuba-dotnet-webapi.fullname" . }}
-  namespace: {{ include "weecuba-dotnet-webapi.namespace" . }}
+  name: {{ include "weecuba-statefulset-service.fullname" . }}
+  namespace: {{ include "weecuba-statefulset-service.namespace" . }}
   labels:
-    {{- include "weecuba-dotnet-webapi.labels" . | nindent 4 }}
+    {{- include "weecuba-statefulset-service.labels" . | nindent 4 }}
     {{- with .Values.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
@@ -18,5 +18,5 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "weecuba-dotnet-webapi.selectorLabels" . | nindent 6 }}
+      {{- include "weecuba-statefulset-service.selectorLabels" . | nindent 6 }}
 {{- end }}
