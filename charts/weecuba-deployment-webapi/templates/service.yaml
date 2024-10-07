@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "weecuba-deployment-webapi.fullname" . }}
+  namespace: {{ include "weecuba-deployment-webapi.namespace" . }}
+  labels:
+    {{- include "weecuba-deployment-webapi.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  {{- with .Values.service.ports }}
+  ports:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
+    {{- include "weecuba-deployment-webapi.selectorLabels" . | nindent 4 }}

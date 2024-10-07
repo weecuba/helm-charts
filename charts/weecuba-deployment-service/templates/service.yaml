@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "weecuba-dotnet-service.fullname" . }}
+  name: {{ include "weecuba-deployment-service.fullname" . }}
   labels:
-    {{- include "weecuba-dotnet-service.labels" . | nindent 4 }}
+    {{- include "weecuba-deployment-service.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   {{- if .Values.metrics.enabled }}
@@ -14,4 +14,4 @@ spec:
       protocol: TCP
   {{- end }}
   selector:
-    {{- include "weecuba-dotnet-service.selectorLabels" . | nindent 4 }}
+    {{- include "weecuba-deployment-service.selectorLabels" . | nindent 4 }}

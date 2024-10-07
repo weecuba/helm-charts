@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "weecuba-statefulset-service.name" . }}
+  namespace: {{ include "weecuba-statefulset-service.namespace" . }}
+  labels:
+    {{- include "weecuba-statefulset-service.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ .Values.serviceName }}
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "weecuba-statefulset-service.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "weecuba-statefulset-service.selectorLabels" . | nindent 8 }}
+    spec:
+      revisionHistoryLimit: {{ .Values.statefulset.revisionHistoryLimit }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "weecuba-statefulset-service.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.securityContext | nindent 8 }}
+      containers:
+        - name: {{ include "weecuba-statefulset-service.fullname" . }}
+          image: "{{ .Values.statefulset.image.repository }}:{{ .Values.statefulset.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.statefulset.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.podSecurityContext | nindent 12 }}
+          env:
+            {{- toYaml .Values.statefulset.environment | nindent 12 }}    
+          envFrom:
+            {{- if .Values.statefulset.extraEnvVarsCM }}
+            - configMapRef:
+                name: {{ .Values.statefulset.extraEnvVarsCM }}
+            {{- end }}
+            {{- if .Values.statefulset.extraEnvVarsSecret }}
+            - secretRef:
+                name: {{ .Values.statefulset.extraEnvVarsSecret }}
+            {{- end }}
+          {{- with .Values.statefulset.containerPorts }}              
+          ports:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.statefulset.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.statefulset.readinessProbe | nindent 12 }}
+          resources:
+            {{- toYaml .Values.statefulset.resources | nindent 12 }}
+          {{- with .Values.statefulset.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- if .Values.statefulset.persistence.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ include "weecuba-statefulset-service.fullname" . }}
+    spec:
+      accessModes:
+      {{- range .Values.statefulset.persistence.accessModes }}
+      - {{ . | quote  }}
+      {{- end }}
+      storageClassName: {{ .Values.statefulset.persistence.storageClass | quote }}
+      resources:
+        requests:
+          storage: {{ .Values.statefulset.persistence.size | quote }}
+      {{- with .Values.statefulset.persistence.selector }}
+      selector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- end }}

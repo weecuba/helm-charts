@@ -1,12 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "weecuba-dotnet-service.fullname" . }}
+  name: {{ include "weecuba-deployment-webapi.fullname" . }}
+  namespace: {{ include "weecuba-deployment-webapi.namespace" . }}
   labels:
-    {{- include "weecuba-dotnet-service.labels" . | nindent 4 }}
-    {{- with .Values.labels }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
+    {{- include "weecuba-deployment-webapi.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.deployment.replicaCount }}
@@ -14,40 +12,42 @@ spec:
   revisionHistoryLimit: {{ .Values.deployment.revisionHistoryLimit }}
   selector:
     matchLabels:
-      {{- include "weecuba-dotnet-service.selectorLabels" . | nindent 6 }}
+      {{- include "weecuba-deployment-webapi.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.deployment.podAnnotations }}
+      {{- with .Values.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "weecuba-dotnet-service.labels" . | nindent 8 }}
-	      {{- with .Values.deployment.podLabels }}
-        {{- toYaml . | nindent 8 }}
+        {{- include "weecuba-deployment-webapi.labels" . | nindent 8 }}
+	      {{- with .Values.podLabels }}
+          {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.deployment.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "weecuba-dotnet-service.serviceAccountName" . }}
+      serviceAccountName: {{ include "weecuba-deployment-webapi.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.deployment.securityContext | nindent 8 }}
       containers:
-        - name: {{ include "weecuba-dotnet-service.fullname" . }}
-          securityContext:
-            {{- toYaml .Values.deployment.podSecurityContext | nindent 12 }}
+        - name: {{ include "weecuba-deployment-webapi.fullname" . }}
           image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.deployment.podSecurityContext | nindent 12 }}
           env:
-            {{- toYaml .Values.deployment.environment | nindent 12 }}
-          {{- if .Values.metrics.enabled }}
+            {{- toYaml .Values.deployment.environment | nindent 12 }}          
+          {{- with .Values.deployment.containerPorts }}
           ports:
-            - name: metrics
-              containerPort: {{ .Values.metrics.targetPort }}
-              protocol: TCP
+            {{- toYaml . | nindent 12 }}
           {{- end }}
+          livenessProbe:
+            {{- toYaml .Values.deployment.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.deployment.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.deployment.resources | nindent 12 }}
           {{- with .Values.deployment.volumeMounts }}

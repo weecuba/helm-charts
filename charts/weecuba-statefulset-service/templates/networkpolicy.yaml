@@ -1,0 +1,42 @@
+{{- if .Values.networkPolicy.enabled }}
+apiVersion: {{ template "networkPolicy.apiVersion" . }}
+kind: NetworkPolicy
+metadata:
+  name: {{ include "weecuba-statefulset-service.fullname" . }}
+  namespace: {{ include "weecuba-statefulset-service.namespace" . }}
+  labels:
+    {{- include "weecuba-statefulset-service.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "weecuba-statefulset-service.selectorLabels" . | nindent 6 }}
+  policyTypes:
+  - Egress
+  {{- if .Values.networkPolicy.ingress }}
+  - Ingress
+  ingress:
+  - from:
+    {{- if .Values.networkPolicy.ingress.podSelector }}
+    - podSelector:
+        matchLabels: {{- include "common.tplvalues.render" (dict "value" .Values.networkPolicy.ingress.podSelector "context" $) | nindent 10 }}
+    {{- end}}
+    ports:
+    - port: {{ .Values.service.port }}
+      protocol: TCP
+  {{- end }}
+  egress:
+  - ports:
+    - port: 53
+      protocol: TCP
+    - port: 53
+      protocol: UDP
+  {{- if and .Values.networkPolicy.egress .Values.networkPolicy.egress.podSelector }}  
+  - to:
+    - podSelector:
+        matchLabels: {{- include "common.tplvalues.render" (dict "value" .Values.networkPolicy.egress.podSelector "context" $) | nindent 10 }}    
+    {{- with .Values.networkPolicy.egress.ports }}
+    ports:
+      {{- toYaml . | nindent 4 }}
+    {{- end}}
+  {{- end }}
+{{- end }}
