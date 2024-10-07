@@ -1,0 +1,22 @@
+{{- if .Values.podDisruptionBudget.create }}
+apiVersion: "policy/v1"
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "weecuba-statefulset-service.fullname" . }}
+  namespace: {{ include "weecuba-statefulset-service.namespace" . }}
+  labels:
+    {{- include "weecuba-statefulset-service.labels" . | nindent 4 }}
+    {{- with .Values.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  {{- if .Values.podDisruptionBudget.minAvailable }}
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
+  {{- end }}
+  {{- if .Values.podDisruptionBudget.maxUnavailable }}
+  maxUnavailable: {{ .Values.podDisruptionBudget.maxUnavailable }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "weecuba-statefulset-service.selectorLabels" . | nindent 6 }}
+{{- end }}
