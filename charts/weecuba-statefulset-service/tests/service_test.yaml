@@ -1,0 +1,30 @@
+# service_test.yaml
+suite: "Service Unit Tests"
+templates:
+  - ../templates/service.yaml
+
+tests:
+  - it: "should create a Service when service.create is true"
+    set:
+      service:
+        create: true
+        type: ClusterIP
+        ports:
+        - port: 80
+          targetPort: 8080
+        - port: 443
+          targetPort: 8443
+      service.name: my-app-service
+    asserts:
+      - isKind:
+          of: Service
+      - equal:
+          path: spec.type
+          value: ClusterIP
+      - equal:
+          path: spec.ports
+          value:
+            - port: 80
+              targetPort: 8080
+            - port: 443
+              targetPort: 8443

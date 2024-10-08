@@ -1,0 +1,33 @@
+suite: "Service Headless Unit Tests"
+
+templates:
+  - service-headless.yaml
+
+tests:
+- it: "should create a headless Service when headlessService.create is true"
+  set:
+    headlessService:
+      create: true
+      publishNotReadyAddresses: true
+      ports:
+      - name: weecuba-statefulset-service
+        port: 8443
+        protocol: TCP
+        targetPort: 8443
+  asserts:
+    - equal: 
+        path: spec.type
+        value: ClusterIP
+    - equal: 
+        path: spec.clusterIP
+        value: None
+    - equal:
+        path: spec.publishNotReadyAddresses
+        value: true
+    - equal:
+        path: spec.ports
+        value:
+          - name: weecuba-statefulset-service
+            port: 8443
+            protocol: TCP
+            targetPort: 8443

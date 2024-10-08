@@ -104,6 +104,26 @@ statefulset:
 
   affinity: {}  
 
+# Configuration for services
+service:
+  create: false
+  # type: ClusterIP
+  # ports:
+  #   - name: weecuba-statefulset-service
+  #     port: 8080
+  #     protocol: TCP
+  #     targetPort: 8080
+
+# Enable/Disable headless service
+headlessService:
+  create: false
+  # publishNotReadyAddresses: true
+  # ports:
+  #   - name: weecuba-statefulset-service
+  #     port: 8080
+  #     protocol: TCP
+  #     targetPort: 8080
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -114,11 +134,6 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
-
-service:
-  #serviceName: null
-  type: ClusterIP
-  port: 80
 
 networkPolicy:
   create: false
