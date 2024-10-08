@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ include "weecuba-statefulset-service.name" . }}
+  name: {{ include "weecuba-statefulset-service.fullname" . }}
   namespace: {{ include "weecuba-statefulset-service.namespace" . }}
   labels:
     {{- include "weecuba-statefulset-service.labels" . | nindent 4 }}
@@ -61,9 +61,11 @@ spec:
             {{- toYaml .Values.statefulset.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.statefulset.resources | nindent 12 }}
+          {{- if .Values.statefulset.persistence.enabled }}
           {{- with .Values.statefulset.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
