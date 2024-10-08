@@ -37,4 +37,18 @@ tests:
     asserts:
       - equal:
           path: spec.template.spec.containers[0].imagePullPolicy
-          value: IfNotPresent        
+          value: IfNotPresent
+
+  - it: "should have the correct pod annotations"
+    set:
+      deployment:
+        podAnnotations:
+          annotation1: "value1"
+          annotation2: "value2"
+    asserts:
+      - equal:
+          path: "spec.template.metadata.annotations.annotation1"
+          value: "value1"
+      - equal:
+          path: "spec.template.metadata.annotations.annotation2"
+          value: "value2"       
