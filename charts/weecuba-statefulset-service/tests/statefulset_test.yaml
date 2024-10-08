@@ -129,6 +129,8 @@ tests:
   - it: "should include volumeMounts when set"
     set:
       statefulset:
+        persistence:
+          enabled: true
         volumeMounts:
           - name: foo
             mountPath: "/etc/foo"
