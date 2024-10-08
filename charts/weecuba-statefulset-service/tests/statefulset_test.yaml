@@ -146,15 +146,6 @@ tests:
           path: spec.template.spec.containers[0].volumeMounts[0].readOnly
           value: true
 
-  # - it: "should not create volumeClaimTemplates when persistence is disabled"
-  #   set:
-  #     statefulset:
-  #       persistence:
-  #         enabled: false
-  #   asserts:
-  #     - notExists:
-  #         path: spec.volumeClaimTemplates
-
   - it: "should create volumeClaimTemplates when persistence is enabled"
     set:
       fullnameOverride: weecuba-statefulset-service-fullname
@@ -192,3 +183,34 @@ tests:
       - equal:
           path: spec.volumeClaimTemplates[0].spec.selector.matchLabels['app.kubernetes.io/environment']
           value: "staging"
+
+  - it: "should include envFrom with secretRef when extraEnvVarsSecret is set"
+    set:
+      statefulset:
+        extraEnvVarsSecret: "my-secret"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].envFrom[0].secretRef.name
+          value: "my-secret"
+
+  - it: "should include envFrom with configMapRef when extraEnvVarsCM is set"
+    set:
+      statefulset:
+        extraEnvVarsCM: "my-configmap"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].envFrom[0].configMapRef.name
+          value: "my-configmap"
+
+  - it: "should include both configMapRef and secretRef in envFrom when both are set"
+    set:
+      statefulset:
+        extraEnvVarsCM: "my-configmap"
+        extraEnvVarsSecret: "my-secret"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].envFrom[0].configMapRef.name
+          value: "my-configmap"
+      - equal:
+          path: spec.template.spec.containers[0].envFrom[1].secretRef.name
+          value: "my-secret"                         
