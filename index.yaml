@@ -14,6 +14,16 @@ entries:
   weecuba-deployment-webapi:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2024-10-08T23:17:23.399511841Z"
+    description: A Helm chart for Kubernetes
+    digest: d131a0a37914e6e3235e301ba3f899341209e40588792285836baf93abb85f63
+    name: weecuba-deployment-webapi
+    type: application
+    urls:
+    - https://github.com/weecuba/helm-charts/releases/download/weecuba-deployment-webapi-0.4.1/weecuba-deployment-webapi-0.4.1.tgz
+    version: 0.4.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2024-10-07T20:45:38.490113929Z"
     description: A Helm chart for Kubernetes
     digest: 291692b08acc38be16c3fe26fc18d4acaf5087ecd4541be34c30522dca75f353
@@ -215,4 +225,4 @@ entries:
     urls:
     - https://github.com/weecuba/helm-charts/releases/download/weecuba-statefulset-service-0.1.0/weecuba-statefulset-service-0.1.0.tgz
     version: 0.1.0
-generated: "2024-10-08T21:57:38.429666468Z"
+generated: "2024-10-08T23:17:23.399550343Z"
