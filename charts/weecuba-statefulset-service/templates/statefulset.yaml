@@ -7,6 +7,7 @@ metadata:
     {{- include "weecuba-statefulset-service.labels" . | nindent 4 }}
 spec:
   serviceName: {{ include "weecuba-statefulset-service.fullname" . }}
+  revisionHistoryLimit: {{ .Values.statefulset.revisionHistoryLimit }}
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.statefulset.replicaCount }}
   {{- end }}
@@ -22,24 +23,19 @@ spec:
       labels:
         {{- include "weecuba-statefulset-service.selectorLabels" . | nindent 8 }}
     spec:
-      revisionHistoryLimit: {{ .Values.statefulset.revisionHistoryLimit }}
-      {{- with .Values.imagePullSecrets }}
+      {{- with .Values.statefulset.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "weecuba-statefulset-service.serviceAccountName" . }}
-      {{- if .Values.securityContext }}
       securityContext:
-        {{- toYaml .Values.securityContext | nindent 8 }}
-      {{- end }}
+        {{- toYaml .Values.statefulset.securityContext | nindent 8 }}
       containers:
         - name: {{ include "weecuba-statefulset-service.fullname" . }}
           image: "{{ .Values.statefulset.image.repository }}:{{ .Values.statefulset.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.statefulset.image.pullPolicy }}
-          {{- if .Values.statefulset.podSecurityContext }}
           securityContext:
             {{- toYaml .Values.statefulset.podSecurityContext | nindent 12 }}          
-          {{- end }}
           {{- if .Values.statefulset.environment }}
           env:
             {{- toYaml .Values.statefulset.environment | nindent 12 }}
@@ -59,18 +55,12 @@ spec:
           ports:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- if .Values.statefulset.livenessProbe -}}
           livenessProbe:
             {{- toYaml .Values.statefulset.livenessProbe | nindent 12 }}
-          {{- end }}
-          {{- if .Values.statefulset.livenessProbe -}}       
           readinessProbe:
             {{- toYaml .Values.statefulset.readinessProbe | nindent 12 }}
-          {{- end }}
-          {{- if .Values.statefulset.resources -}}            
           resources:
             {{- toYaml .Values.statefulset.resources | nindent 12 }}
-          {{- end }}
           {{- with .Values.statefulset.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}

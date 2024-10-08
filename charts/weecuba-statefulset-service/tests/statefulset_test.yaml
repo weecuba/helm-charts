@@ -4,12 +4,189 @@ templates:
   - statefulset.yaml
 
 tests:
+
+  - it: "should set revisionHistoryLimit when defined in values"
+    set:
+      statefulset:
+        revisionHistoryLimit: 10
+    asserts:
+      - equal:
+          path: spec.revisionHistoryLimit
+          value: 10
+
   - it: should work
     set:
-      stateful.image.tag: latest
+      statefulset:
+        image:
+          repository: my-image
+          tag: 1.0.0
     asserts:
       - isKind:
           of: StatefulSet
       - equal:
           path: spec.template.spec.containers[0].image
-          value: alpine:latest
+          value: my-image:1.0.0
+
+  - it: "should set imagePullPolicy to Never"
+    set:
+      statefulset.image.pullPolicy: "Never"
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].imagePullPolicy
+          value: "Never"         
+
+  - it: "should create imagePullSecrets when defined in values"
+    set:
+      statefulset:
+        imagePullSecrets:
+          - name: my-secret
+    asserts:
+      - equal:
+          path: spec.template.spec.imagePullSecrets[0].name
+          value: "my-secret"
+
+  - it: "should include the correct liveness probe configuration"
+    set:
+      statefulset.livenessProbe:
+        httpGet:
+          path: /health
+          port: 8080
+        initialDelaySeconds: 5
+        timeoutSeconds: 2
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.httpGet.path
+          value: "/health"
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.httpGet.port
+          value: 8080
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.initialDelaySeconds
+          value: 5
+      - equal:
+          path: spec.template.spec.containers[0].livenessProbe.timeoutSeconds
+          value: 2
+
+  - it: "should include the correct readiness probe configuration"
+    set:
+      statefulset.readinessProbe:
+        httpGet:
+          path: /ready
+          port: 8081
+        initialDelaySeconds: 10
+        periodSeconds: 3
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.httpGet.path
+          value: "/ready"
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.httpGet.port
+          value: 8081
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.initialDelaySeconds
+          value: 10
+      - equal:
+          path: spec.template.spec.containers[0].readinessProbe.periodSeconds
+          value: 3
+
+  - it: "should set the correct podSecurityContext"
+    set:
+      statefulset.podSecurityContext:
+        capabilities:
+          drop:
+            - ALL
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.capabilities.drop[0]
+          value: "ALL"
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.readOnlyRootFilesystem
+          value: true
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsNonRoot
+          value: true
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsUser
+          value: 1000
+      - equal:
+          path: spec.template.spec.containers[0].securityContext.runAsGroup
+          value: 1000
+
+  - it: "should set the correct fsGroup in the securityContext"
+    set:
+      statefulset:
+        securityContext:
+          fsGroup: 2000
+    asserts:
+      - equal:
+          path: spec.template.spec.securityContext.fsGroup
+          value: 2000
+
+  - it: "should include volumeMounts when set"
+    set:
+      statefulset:
+        volumeMounts:
+          - name: foo
+            mountPath: "/etc/foo"
+            readOnly: true
+    asserts:
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts[0].name
+          value: "foo"
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts[0].mountPath
+          value: "/etc/foo"
+      - equal:
+          path: spec.template.spec.containers[0].volumeMounts[0].readOnly
+          value: true
+
+  # - it: "should not create volumeClaimTemplates when persistence is disabled"
+  #   set:
+  #     statefulset:
+  #       persistence:
+  #         enabled: false
+  #   asserts:
+  #     - notExists:
+  #         path: spec.volumeClaimTemplates
+
+  - it: "should create volumeClaimTemplates when persistence is enabled"
+    set:
+      fullnameOverride: weecuba-statefulset-service-fullname
+      statefulset:
+        persistence:
+          enabled: true
+          storageClass: local-storage
+          size: 1Gi
+          accessModes:
+            - ReadWriteOnce
+          selector:
+            matchLabels:
+              app.kubernetes.io/name: test-application
+              app.kubernetes.io/organization: my-organization
+              app.kubernetes.io/environment: staging
+    asserts:
+      - equal:
+          path: spec.volumeClaimTemplates[0].metadata.name
+          value: "weecuba-statefulset-service-fullname"
+      - equal:
+          path: spec.volumeClaimTemplates[0].spec.accessModes[0]
+          value: "ReadWriteOnce"
+      - equal:
+          path: spec.volumeClaimTemplates[0].spec.storageClassName
+          value: "local-storage"
+      - equal:
+          path: spec.volumeClaimTemplates[0].spec.resources.requests.storage
+          value: "1Gi"
+      - equal:
+          path: spec.volumeClaimTemplates[0].spec.selector.matchLabels['app.kubernetes.io/name']
+          value: "test-application"
+      - equal:
+          path: spec.volumeClaimTemplates[0].spec.selector.matchLabels['app.kubernetes.io/organization']
+          value: "my-organization"
+      - equal:
+          path: spec.volumeClaimTemplates[0].spec.selector.matchLabels['app.kubernetes.io/environment']
+          value: "staging"
