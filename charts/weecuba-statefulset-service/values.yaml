@@ -24,10 +24,10 @@ statefulset:
   environment: []
 
   # Define extra environment variable from configuration maps
-  extraEnvVarsCM: {}
+  extraEnvVarsCM: ""
 
   # Define extra environment variable from secrets
-  extraEnvVarsSecret: {}
+  extraEnvVarsSecret: ""
 
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
