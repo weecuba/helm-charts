@@ -1,9 +1,11 @@
+{{- if .Values.headlessService.create }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "weecuba-statefulset-service.fullname" . }}
+  name: {{ include "weecuba-statefulset-service.fullname" . }}-headless
   namespace: {{ include "weecuba-statefulset-service.namespace" . }}
   labels:
+    {{- include "weecuba-statefulset-service.labels" . | nindent 4 }}
     app.kubernetes.io/component: primary
   annotations:
     # Use this annotation in addition to the actual publishNotReadyAddresses
@@ -17,11 +19,12 @@ spec:
   # We want all pods in the StatefulSet to have their addresses published for
   # the sake of the other Postgresql pods even before they're ready, since they
   # have to be able to talk to each other in order to become ready.
-  publishNotReadyAddresses: true
+  publishNotReadyAddresses: {{ .Values.headlessService.publishNotReadyAddresses }}
+  {{- with .Values.headlessService.ports }}
   ports:
-    - name: postgres
-      port: {{ .Values.service.port }}
-      targetPort: postgres
-  selector: 
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  selector:
     {{- include "weecuba-statefulset-service.selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: primary
+{{- end }}
