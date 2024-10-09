@@ -16,7 +16,7 @@ spec:
       {{- include "weecuba-statefulset-service.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
+      {{- with .Values.statefulset.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
