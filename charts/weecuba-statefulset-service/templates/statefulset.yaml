@@ -82,7 +82,7 @@ spec:
   {{- if .Values.statefulset.persistence.enabled }}
   volumeClaimTemplates:
   - metadata:
-      name: {{ include "weecuba-statefulset-service.fullname" . }}
+      name: {{ .Values.statefulset.persistence.name }}
     spec:
       accessModes:
       {{- range .Values.statefulset.persistence.accessModes }}
