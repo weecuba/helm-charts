@@ -152,6 +152,7 @@ tests:
       statefulset:
         persistence:
           enabled: true
+          name: my-pvc-name
           storageClass: local-storage
           size: 1Gi
           accessModes:
@@ -164,7 +165,7 @@ tests:
     asserts:
       - equal:
           path: spec.volumeClaimTemplates[0].metadata.name
-          value: "weecuba-statefulset-service-fullname"
+          value: "my-pvc-name"
       - equal:
           path: spec.volumeClaimTemplates[0].spec.accessModes[0]
           value: "ReadWriteOnce"

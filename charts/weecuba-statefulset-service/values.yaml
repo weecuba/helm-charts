@@ -88,6 +88,7 @@ statefulset:
   # Persistent volume claim template
   persistence:
     enabled: false
+    # name: pvc-name
     # storageClass: local-storage
     # size: 1Gi
     # accessModes: 
