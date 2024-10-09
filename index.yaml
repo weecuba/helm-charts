@@ -177,6 +177,16 @@ entries:
   weecuba-statefulset-service:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2024-10-09T16:43:56.196267477Z"
+    description: A Helm chart for Kubernetes
+    digest: 58b9c1810091c6bf169b713b68e146e57e0bd9f5305e5aceef4cfdda6bf8f242
+    name: weecuba-statefulset-service
+    type: application
+    urls:
+    - https://github.com/weecuba/helm-charts/releases/download/weecuba-statefulset-service-0.1.5/weecuba-statefulset-service-0.1.5.tgz
+    version: 0.1.5
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2024-10-08T21:57:38.42961927Z"
     description: A Helm chart for Kubernetes
     digest: 184bab75e42d4ea96e45f0959e70e9b5fc5c993e3480fdbcca9f67531ee176ff
@@ -225,4 +235,4 @@ entries:
     urls:
     - https://github.com/weecuba/helm-charts/releases/download/weecuba-statefulset-service-0.1.0/weecuba-statefulset-service-0.1.0.tgz
     version: 0.1.0
-generated: "2024-10-08T23:17:23.399550343Z"
+generated: "2024-10-09T16:43:56.196320325Z"
